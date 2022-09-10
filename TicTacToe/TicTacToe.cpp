@@ -26,14 +26,18 @@ namespace TicTacToe
 		const std::string DEFAULT_BOARD_NAME = "Unnamed Board";
 
 		char board[3][3];
-		std::string* boardName;
+		std::string boardName;
 
 		Board() : board()
 		{
-			*boardName = DEFAULT_BOARD_NAME;
+			boardName = DEFAULT_BOARD_NAME;
+			initializeBoard();
 		}
 
-		Board(std::string* name) : board(), boardName(name) {}
+		Board(std::string *name) : board(), boardName(*name)
+		{
+			initializeBoard();
+		}
 
 		void print()
 		{
@@ -74,6 +78,17 @@ namespace TicTacToe
 		}
 
 	private:
+		void initializeBoard()
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					board[i][j] = 'a';
+				}
+			}
+		}
+
 		void printBoardName()
 		{
 			std::cout << "Board: " << boardName << ".\n";
