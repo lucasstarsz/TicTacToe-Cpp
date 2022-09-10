@@ -110,7 +110,7 @@ namespace TicTacToe
 	}
 }
 
-std::string * getInput(std::string prompt)
+std::string getInput(std::string prompt)
 {
 	std::string result;
 
@@ -142,7 +142,7 @@ std::string * getInput(std::string prompt)
 
 	} while (true);
 
-	return &result;
+	return result;
 }
 
 int main()
@@ -152,8 +152,8 @@ int main()
 	std::string player1Name;
 	std::string player2Name;
 
-	player1Name = *getInput("Player 1's name: ");
-	player2Name = *getInput("Player 2's name: ");
+	player1Name = getInput("Player 1's name: ");
+	player2Name = getInput("Player 2's name: ");
 
 	TicTacToe::Player player1 = { 1, &player1Name };
 	TicTacToe::Player player2 = { 2, &player2Name };
