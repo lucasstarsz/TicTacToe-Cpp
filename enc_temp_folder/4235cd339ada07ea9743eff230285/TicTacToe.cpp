@@ -159,7 +159,7 @@ namespace TicTacToe
 
 		std::srand(timeSeed.count());
 
-		const int firstPlayerTurn = (std::rand() % 2);
+		const int firstPlayerTurn = (std::rand() % 2); std::cout << firstPlayerTurn;
 
 		Player currentPlayer = firstPlayerTurn % 2 == 0 ? *player2 : *player1;
 		std::string playerCommand;
