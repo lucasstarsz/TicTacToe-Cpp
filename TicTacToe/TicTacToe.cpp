@@ -1,20 +1,161 @@
-// TicTacToe.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// TicTacToe.cpp : This file contains the 'main' function for CLI Tic-Tac-Toe.
+// 
+// Author: Andrew Dey
 
 #include <iostream>
 
-int main()
+namespace TicTacToe
 {
-    std::cout << "Hello World!\n";
+	struct Player
+	{
+		int number;
+		std::string* name;
+	};
+
+	enum BoardPrintType
+	{
+		Name,
+		Contents,
+		All,
+	};
+
+	class Board
+	{
+	public:
+		const std::string DEFAULT_BOARD_NAME = "Unnamed Board";
+
+		char board[3][3];
+		std::string* boardName;
+
+		Board() : board()
+		{
+			*boardName = DEFAULT_BOARD_NAME;
+		}
+
+		Board(std::string* name) : board(), boardName(name) {}
+
+		void print()
+		{
+			print(All);
+		}
+
+		void print(BoardPrintType printType)
+		{
+			switch (printType)
+			{
+			case Name:
+				printBoardName();
+				break;
+			case Contents:
+				printBoardContents();
+				break;
+			case All:
+				printBoardName();
+				printBoardContents();
+				break;
+			}
+		}
+
+		bool hasWinner()
+		{
+			// TODO: check 3 in a row:
+			// TODO: left-to-right
+			// TODO: top-to-bottom
+			// TODO: diagonally left-to-right
+			// TODO: diagonally right-to-left
+
+			return false;
+		}
+
+		~Board()
+		{
+			std::cout << "Board '" << boardName << "' deleted.";
+		}
+
+	private:
+		void printBoardName()
+		{
+			std::cout << "Board: " << boardName << ".\n";
+		}
+
+		void printBoardContents()
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					std::cout << board[i][j];
+				}
+
+				std::cout << "\n";
+			}
+		}
+	};
+
+	void runGame(Player* player1, Player* player2)
+	{
+		std::string boardName = (*player1->name + " vs " + *player2->name);
+		Board board = (&boardName);
+
+		board.print();
+
+		while (!board.hasWinner())
+		{
+			// TODO: notify player turn
+			// TODO: wait for command
+			// TODO: process command
+			// TODO: show board
+		}
+	}
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+std::string getInput(std::string prompt)
+{
+	std::string result;
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+	do
+	{
+		std::cout << prompt;
+		std::cin >> result;
+
+		if (result.empty())
+		{
+			continue;
+		}
+
+		bool isValid = false;
+
+		for (int i = 0; i < result.length(); i++)
+		{
+			if (result[i] != ' ')
+			{
+				isValid = true;
+				break;
+			}
+		}
+
+		if (isValid)
+		{
+			break;
+		}
+
+	} while (true);
+
+	return result;
+}
+
+int main()
+{
+	std::cout << "Hello World!\n";
+
+	std::string player1Name;
+	std::string player2Name;
+
+	player1Name = getInput("Player 1's name: ");
+	player2Name = getInput("Player 2's name: ");
+
+	TicTacToe::Player player1 = { 1, &player1Name };
+	TicTacToe::Player player2 = { 2, &player2Name };
+
+	TicTacToe::runGame(&player1, &player2);
+}
