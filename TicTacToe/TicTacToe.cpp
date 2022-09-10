@@ -117,7 +117,7 @@ std::string * getInput(std::string prompt)
 	do
 	{
 		std::cout << prompt;
-		std::cin >> result;
+		std::getline(std::cin, result);
 
 		if (result.empty())
 		{
