@@ -84,7 +84,7 @@ namespace TicTacToe
 			{
 				for (int j = 0; j < 3; j++)
 				{
-					board[i][j] = 'a';
+					board[i][j] = ' ';
 				}
 			}
 		}
