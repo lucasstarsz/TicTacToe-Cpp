@@ -346,10 +346,10 @@ namespace TicTacToe
 
 		board.print();
 
-		// I mean... It's fine?
+		// I mean... It's fine, I guess?
 		// I should look farther into that C++11 api...
-		const std::chrono::nanoseconds timeSeed = std::chrono::duration_cast<std::chrono::nanoseconds>(
-			std::chrono::system_clock::now().time_since_epoch());
+		namespace chrono = std::chrono;
+		const chrono::nanoseconds timeSeed = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch());
 
 		std::srand(timeSeed.count());
 
