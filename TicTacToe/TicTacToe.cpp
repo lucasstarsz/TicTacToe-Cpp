@@ -354,10 +354,9 @@ namespace TicTacToe
 		std::srand(timeSeed.count());
 
 		const int firstPlayerTurn = (std::rand() % 2);
+		Player currentPlayer = firstPlayerTurn == 0 ? *player2 : *player1;
 
-		Player currentPlayer = firstPlayerTurn % 2 == 0 ? *player2 : *player1;
 		std::string playerCommand;
-
 		std::vector<std::string> parsedPlayerCommand = {};
 
 		while (!board.hasWinner())
