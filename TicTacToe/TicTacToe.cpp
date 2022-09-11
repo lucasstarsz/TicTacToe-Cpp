@@ -16,7 +16,7 @@ namespace TicTacToe
 	namespace Utilities
 	{
 		/// Gets input from std::cin, with a given prompt.
-		/// If input is empty, or blank (all ASCII spaces), then it will be considered invalid.
+		/// If input is empty, or blank (all US-ASCII spaces), then it will be considered invalid.
 		/// If input is invalid, the user is prompted again.
 		std::string* getInput(std::string prompt, std::string* dest)
 		{
@@ -383,8 +383,8 @@ namespace TicTacToe
 			{"help", &helpCommand}
 		};
 
-		/// Returns whether a command was found.
-		/// Note: does not support anything other than ascii.
+		/// Returns whether a command was found, or completed an action warranting a player swap (like playing a move, or skipping).
+		/// Note: does not support anything other than US-ASCII.
 		bool processCommand(std::vector<std::string>* command, Board* board, Player* player)
 		{
 			Utilities::stringToLower(&command->at(0));
