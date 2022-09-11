@@ -483,6 +483,16 @@ namespace TicTacToe
 	}
 }
 
+bool shouldPlayAgain()
+{
+	std::string response;
+
+	TicTacToe::Utilities::getInput("Play another match? (Y)es to play, (N)o or (C)ancel to exit. ", &response);
+	TicTacToe::Utilities::stringToLower(&response);
+
+	return response == "yes" || (response.length() == 1 && response[0] == 'y');
+}
+
 int main()
 {
 	std::cout << "This, ia a Tic-Tac-Toe project by lucasstarsz.\nGitHub: https://github.com/lucasstarsz/Cpp-TicTacToe\n\n";
@@ -496,5 +506,11 @@ int main()
 	TicTacToe::Player player1 = { 1, &player1Name };
 	TicTacToe::Player player2 = { 2, &player2Name };
 
-	TicTacToe::runGame(&player1, &player2);
+	do
+	{
+		TicTacToe::runGame(&player1, &player2);
+	} while (shouldPlayAgain());
+
+	std::cout << "Press the enter key to exit.";
+	std::cin.get();
 }
