@@ -262,13 +262,7 @@ namespace TicTacToe
     private:
         void initializeBoard()
         {
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    board[(3 * i) + j] = EMPTY;
-                }
-            }
+            std::memset(board, EMPTY, 9);
         }
 
         void printBoardName()
