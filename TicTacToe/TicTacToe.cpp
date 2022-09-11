@@ -353,7 +353,8 @@ namespace TicTacToe
 		const std::unordered_map<std::string, bool (*)(std::vector<std::string>*, Board*, Player*)> commands = {
 			{"exit", &exitCommand},
 			{"show", &showCommand},
-			{"play", &playCommand}
+			{"play", &playCommand},
+			{"p", &playCommand}
 		};
 
 		/// Returns whether a command was found.
