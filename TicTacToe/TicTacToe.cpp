@@ -270,7 +270,7 @@ namespace TicTacToe
 
 int main()
 {
-	std::cout << "Hello World!\n";
+	std::cout << "This, ia a very WIP Tic-Tac-Toe project by lucasstarsz.\nGitHub: https://github.com/lucasstarsz/Cpp-TicTacToe\n\n";
 
 	std::string player1Name;
 	std::string player2Name;
