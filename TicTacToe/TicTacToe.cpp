@@ -204,9 +204,35 @@ namespace TicTacToe
 			return true;
 		}
 
+		const std::unordered_map<std::string, BoardPrintType> showOptions = {
+			{"name", Name},
+			{"boardname", Name},
+			{"contents", Contents},
+			{"board", Contents},
+			{"all", All}
+		};
+
 		bool showCommand(std::vector<std::string>* command, Board* board, Player* player)
 		{
-			std::cout << "Not yet implemented.\n";
+			if (command->size() < 2)
+			{
+				// default to showing the board
+				board->print();
+				return false;
+			}
+
+			Utilities::stringToLower(&command->at(1));
+
+			if (showOptions.count(command->at(1)) < 1)
+			{
+				std::cout << "Nothing to show for '" << command->at(1) << "'. Displaying default.\n";
+				board->print();
+				return false;
+			}
+
+			BoardPrintType printType = showOptions.at(command->at(1));
+			board->print(printType);
+
 			return false;
 		}
 
