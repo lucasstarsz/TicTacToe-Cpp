@@ -5,6 +5,9 @@
 #include <string>
 #include <iostream>
 #include <chrono>
+#include <unordered_map>
+#include <algorithm>
+#include <vector>
 
 namespace TicTacToe
 {
@@ -45,6 +48,44 @@ namespace TicTacToe
 
 			return result;
 		}
+
+		std::vector<std::string>* split(std::string* str, const std::string* delimiter, std::vector<std::string>* dest)
+		{
+			size_t last(0);
+			size_t next(0);
+
+			if ((next = str->find(*delimiter, last)) != std::string::npos)
+			{
+				dest->push_back(str->substr(last, next - last));
+				last = next + 1;
+			}
+			else
+			{
+				dest->push_back(*str);
+				return dest;
+			}
+
+			while (last < str->length())
+			{
+				next = str->find(*delimiter, last);
+				dest->push_back(str->substr(last, next - last));
+
+				if (next == std::string::npos)
+				{
+					break;
+				}
+
+				last = next + 1;
+			}
+
+			return dest;
+		}
+
+		std::vector<std::string>* split(std::string* str, std::vector<std::string>* dest)
+		{
+			std::string delimiter = " ";
+			return split(str, &delimiter, dest);
+		}
 	}
 
 	struct Player
@@ -74,7 +115,7 @@ namespace TicTacToe
 			initializeBoard();
 		}
 
-		Board(std::string *name) : board(), boardName(*name)
+		Board(std::string* name) : board(), boardName(*name)
 		{
 			initializeBoard();
 		}
@@ -144,6 +185,47 @@ namespace TicTacToe
 		}
 	};
 
+	namespace Commands
+	{
+
+		bool exitCommand(std::vector<std::string>* command, Board* board, Player* player)
+		{
+			std::cout << "Exiting game...\n";
+			exit(0);
+
+			return true;
+		}
+
+		bool showCommand(std::vector<std::string>* command, Board* board, Player* player)
+		{
+			std::cout << "Not yet implemented.\n";
+			return false;
+		}
+
+		const std::unordered_map<std::string, bool (*)(std::vector<std::string>*, Board*, Player*)> commands = {
+			{"exit", &exitCommand},
+			{"show", &showCommand}
+		};
+
+		/// returns whether a command was found
+		/// Note: does not support anything other than ascii.
+		/// Sorry, to the other 80% of the world who isn't insane and using ascii by default still
+		bool processCommand(std::vector<std::string>* command, Board* board, Player* player)
+		{
+			std::transform(command->at(0).begin(), command->at(0).end(), command->at(0).begin(),
+				[](unsigned char c) { return std::tolower(c); });
+
+			if (commands.count(command->at(0)) < 1)
+			{
+				std::cout << "No command '" << command->at(0) << "' was found.\n";
+				return false;
+			}
+
+			auto nextCommand = commands.at(command->at(0));
+			return nextCommand(command, board, player);
+		}
+	}
+
 	void runGame(Player* player1, Player* player2)
 	{
 		std::string boardName = (*player1->name + " vs " + *player2->name);
@@ -154,8 +236,7 @@ namespace TicTacToe
 		// I mean... It's fine?
 		// I should look farther into that C++11 api...
 		const std::chrono::nanoseconds timeSeed = std::chrono::duration_cast<std::chrono::nanoseconds>(
-			std::chrono::system_clock::now().time_since_epoch()
-		);
+			std::chrono::system_clock::now().time_since_epoch());
 
 		std::srand(timeSeed.count());
 
@@ -164,20 +245,19 @@ namespace TicTacToe
 		Player currentPlayer = firstPlayerTurn % 2 == 0 ? *player2 : *player1;
 		std::string playerCommand;
 
+		std::vector<std::string> parsedPlayerCommand = {};
+
 		while (!board.hasWinner())
 		{
-			// TODO: notify player turn
-			// TODO: wait for command
-			playerCommand = TicTacToe::Utilities::getInput(*currentPlayer.name + "'s turn: ");
+			playerCommand = Utilities::getInput(*currentPlayer.name + "'s turn: ");
+			Utilities::split(&playerCommand, &parsedPlayerCommand);
 
-			// TODO: process command
-			std::cout << "Received command from " << *currentPlayer.name << ": '" << playerCommand << "\'\n";
+			if (Commands::processCommand(&parsedPlayerCommand, &board, &currentPlayer))
+			{
+				currentPlayer = currentPlayer.number == 1 ? *player2 : *player1;
+			}
 
-			// TODO: show board
-			board.print();
-			
-			// TODO: change player
-			currentPlayer = currentPlayer.number == 1 ? *player2 : *player1;
+			parsedPlayerCommand.clear();
 		}
 	}
 }
