@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <vector>
+#include <type_traits>
 
 namespace TicTacToe
 {
@@ -94,6 +95,26 @@ namespace TicTacToe
 		{
 			std::transform(str->begin(), str->end(), str->begin(), [](unsigned char c) { return std::tolower(c); });
 		}
+
+		/// Checks whether the given values in 'nums' are within the given 'min' and 'max' values.
+		/// Note that types 'T' and 'TVA' need to be the same.
+		template<
+			typename T,
+			typename... TVA,
+			typename = std::enable_if_t<std::conjunction<std::is_same<T, TVA>...>::value, bool>
+		>
+		bool withinRange(T min, T max, TVA... nums)
+		{
+			for (T n : {nums...})
+			{
+				if (n < min || n > max)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 	}
 
 	struct Player
@@ -148,6 +169,16 @@ namespace TicTacToe
 				printBoardContents();
 				break;
 			}
+		}
+
+		bool isSpaceAvailable(int row, int col)
+		{
+			return board[row][col] == ' ';
+		}
+
+		void play(int row, int col, int playerNumber)
+		{
+			board[row][col] = playerNumber == 1 ? 'X' : 'O';
 		}
 
 		bool hasWinner()
@@ -238,9 +269,57 @@ namespace TicTacToe
 			return false;
 		}
 
+		bool playCommand(std::vector<std::string>* command, Board* board, Player* player)
+		{
+			if (command->size() < 3)
+			{
+				std::cout << "Usage: play <column 1, 2, or 3> <row 1, 2, or 3>\n";
+				return false;
+			}
+
+			int row;
+			int column;
+
+			try
+			{
+				row = std::stoi(command->at(1));
+				column = std::stoi(command->at(2));
+			}
+			catch (std::logic_error const& exception)
+			{
+				std::cout << "Invalid row/column.\n";
+				std::cout << "Usage: play <column 1, 2, or 3> <row 1, 2, or 3>\n";
+
+				return false;
+			}
+
+			if (!Utilities::withinRange(1, 3, column, row))
+			{
+				std::cout << "Invalid row/column.\n";
+				std::cout << "Usage: play <column 1, 2, or 3> <row 1, 2, or 3>\n";
+
+				return false;
+			}
+
+			if (!board->isSpaceAvailable(row - 1, column - 1))
+			{
+				std::cout << "Space (" << row << ", " << column << ") has already been played!\n";
+
+				return false;
+			}
+
+			board->play(row - 1, column - 1, player->number);
+
+			// players will want to know what the board looks like after a successful play
+			board->print(Contents);
+
+			return true;
+		}
+
 		const std::unordered_map<std::string, bool (*)(std::vector<std::string>*, Board*, Player*)> commands = {
 			{"exit", &exitCommand},
-			{"show", &showCommand}
+			{"show", &showCommand},
+			{"play", &playCommand}
 		};
 
 		/// Returns whether a command was found.
