@@ -135,7 +135,18 @@ namespace TicTacToe
 	public:
 		const std::string DEFAULT_BOARD_NAME = "Unnamed Board";
 
-		char board[3][3];
+		const int WIN_CONDITIONS[8][3] = {
+			{0, 1, 2},
+			{3, 4, 5},
+			{6, 7, 8},
+			{0, 3, 6},
+			{1, 4, 7},
+			{2, 5, 8},
+			{0, 4, 8},
+			{2, 4, 6}
+		};
+
+		char board[9];
 		std::string boardName;
 
 		Board() : board()
@@ -173,28 +184,51 @@ namespace TicTacToe
 
 		bool isSpaceAvailable(int row, int col)
 		{
-			return board[row][col] == ' ';
+			return board[(3 * row) + col] == ' ';
 		}
 
 		void play(int row, int col, int playerNumber)
 		{
-			board[row][col] = playerNumber == 1 ? 'X' : 'O';
+			board[(3 * row) + col] = playerNumber == 1 ? 'X' : 'O';
 		}
 
-		bool hasWinner()
+		bool boardIsFilled()
 		{
-			// TODO: check 3 in a row:
-			// TODO: left-to-right
-			// TODO: top-to-bottom
-			// TODO: diagonally left-to-right
-			// TODO: diagonally right-to-left
+			for (int i = 0; i < 9; i++)
+			{
+				if (board[i] == ' ')
+				{
+					return false;
+				}
+			}
 
-			return false;
+			return true;
 		}
 
-		~Board()
+		int hasWinner()
 		{
-			std::cout << "Board '" << boardName << "' deleted.";
+			const char player1 = 'X';
+			const char player2 = 'O';
+
+			for (const int* winCondition : WIN_CONDITIONS)
+			{
+				if (board[winCondition[0]] == ' ' || board[winCondition[1]] == ' ' || board[winCondition[2]] == ' ')
+				{
+					continue;
+				}
+
+				if (board[winCondition[0]] == board[winCondition[1]] && board[winCondition[0]] == board[winCondition[2]])
+				{
+					return player1 == board[winCondition[0]] ? 1 : 2;
+				}
+			}
+
+			if (boardIsFilled())
+			{
+				return 3;
+			}
+
+			return 0;
 		}
 
 	private:
@@ -204,7 +238,7 @@ namespace TicTacToe
 			{
 				for (int j = 0; j < 3; j++)
 				{
-					board[i][j] = ' ';
+					board[(3 * i) + j] = ' ';
 				}
 			}
 		}
@@ -217,11 +251,11 @@ namespace TicTacToe
 		void printBoardContents()
 		{
 			std::cout << "     1   2   3  \n   -------------\n";
-			std::cout << " 1 | " << board[0][0] << " | " << board[0][1] << " | " << board[0][2] << " |\n";
+			std::cout << " 1 | " << board[0] << " | " << board[1] << " | " << board[2] << " |\n";
 			std::cout << "   |-----------|\n";
-			std::cout << " 2 | " << board[1][0] << " | " << board[1][1] << " | " << board[1][2] << " |\n";
+			std::cout << " 2 | " << board[3] << " | " << board[4] << " | " << board[5] << " |\n";
 			std::cout << "   |-----------|\n";
-			std::cout << " 3 | " << board[2][0] << " | " << board[2][1] << " | " << board[2][2] << " |\n";
+			std::cout << " 3 | " << board[6] << " | " << board[7] << " | " << board[8] << " |\n";
 			std::cout << "   -------------\n\n";
 		}
 	};
@@ -351,7 +385,7 @@ namespace TicTacToe
 		namespace chrono = std::chrono;
 		const chrono::nanoseconds timeSeed = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch());
 
-		std::srand(timeSeed.count());
+		std::srand((unsigned int)timeSeed.count());
 
 		const int firstPlayerTurn = (std::rand() % 2);
 		Player currentPlayer = firstPlayerTurn == 0 ? *player2 : *player1;
@@ -359,17 +393,51 @@ namespace TicTacToe
 		std::string playerCommand;
 		std::vector<std::string> parsedPlayerCommand = {};
 
-		while (!board.hasWinner())
-		{
-			Utilities::getInput(*currentPlayer.name + "'s turn: ", &playerCommand);
-			Utilities::split(&playerCommand, &parsedPlayerCommand);
+		int winner = 0;
 
-			if (Commands::processCommand(&parsedPlayerCommand, &board, &currentPlayer))
+		try
+		{
+			while (!winner)
 			{
-				currentPlayer = currentPlayer.number == 1 ? *player2 : *player1;
+				Utilities::getInput(*currentPlayer.name + "'s turn: ", &playerCommand);
+				Utilities::split(&playerCommand, &parsedPlayerCommand);
+
+				if (Commands::processCommand(&parsedPlayerCommand, &board, &currentPlayer))
+				{
+					currentPlayer = currentPlayer.number == 1 ? *player2 : *player1;
+				}
+
+				parsedPlayerCommand.clear();
+				winner = board.hasWinner();
 			}
 
-			parsedPlayerCommand.clear();
+		}
+		catch (std::exception& exception)
+		{
+			winner = -1;
+			std::cerr << exception.what();
+		}
+
+		switch (winner)
+		{
+		case 1:
+			std::cout << player1->name << " wins!\n";
+			break;
+		case 2:
+			std::cout << player2->name << " wins!\n";
+			break;
+		case 3:
+			std::cout << "It's a tie!\n";
+			break;
+		case -1:
+			std::cout << "Game error.\n";
+			break;
+		case 0:
+			std::cout << "Game ended.\n";
+			break;
+		default:
+			std::cout << "Game ended, winner was case '" << winner << "'.\n";
+			break;
 		}
 	}
 }
