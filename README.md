@@ -18,5 +18,11 @@ It does not claim to be a strong source of learning material, let alone reputabl
 
 ## Version Log
 
+### v1.1
+- added indicator of X vs O to players
+- players can now rename the boards and themselves
+- players can quietly exit the game with `exit q` or `exit quiet`
+- added ability to play rematches ingame
+
 ### v1.0
 - initial game 'release'
