@@ -573,4 +573,6 @@ int main()
 
     std::cout << "Press the enter key to exit.";
     std::cin.get();
+
+    return 0;
 }
