@@ -453,7 +453,7 @@ namespace TicTacToe
 			std::cout << "Game Commands:\n";
 			std::cout << "exit -- exits the game immediately.\n";
 			std::cout << "show [name/boardname, board/contents, all] -- shows information about the board.\n";
-			std::cout << "rename <board, or self> <new name>\ -- renames the given target with a new name.\n";
+			std::cout << "rename <board, or self> <new name> -- renames the given target with a new name.\n";
 			std::cout << "play <row> <column> -- shows information about the board.\n";
 			std::cout << "help -- brings up this message.\n\n";
 
@@ -566,7 +566,7 @@ bool shouldPlayAgain()
 
 int main()
 {
-	std::cout << "This, ia a Tic-Tac-Toe project by lucasstarsz.\nGitHub: https://github.com/lucasstarsz/Cpp-TicTacToe\n\n";
+	std::cout << "This, is a Tic-Tac-Toe project by lucasstarsz.\nGitHub: https://github.com/lucasstarsz/Cpp-TicTacToe\n\n";
 
 	std::string player1Name;
 	std::string player2Name;
