@@ -86,6 +86,13 @@ namespace TicTacToe
 			std::string delimiter = " ";
 			return split(str, &delimiter, dest);
 		}
+
+		/// Converts US-ASCII characters to their lowercase counterparts, using std::tolower.
+		/// Note: does not support anything other than ascii.
+		void stringToLower(std::string* str)
+		{
+			std::transform(str->begin(), str->end(), str->begin(), [](unsigned char c) { return std::tolower(c); });
+		}
 	}
 
 	struct Player
@@ -207,13 +214,11 @@ namespace TicTacToe
 			{"show", &showCommand}
 		};
 
-		/// returns whether a command was found
+		/// Returns whether a command was found.
 		/// Note: does not support anything other than ascii.
-		/// Sorry, to the other 80% of the world who isn't insane and using ascii by default still
 		bool processCommand(std::vector<std::string>* command, Board* board, Player* player)
 		{
-			std::transform(command->at(0).begin(), command->at(0).end(), command->at(0).begin(),
-				[](unsigned char c) { return std::tolower(c); });
+			Utilities::stringToLower(&command->at(0));
 
 			if (commands.count(command->at(0)) < 1)
 			{
