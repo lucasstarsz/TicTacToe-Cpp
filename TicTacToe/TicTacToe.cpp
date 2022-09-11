@@ -14,25 +14,26 @@ namespace TicTacToe
 
 	namespace Utilities
 	{
-		std::string getInput(std::string prompt)
+		/// Gets input from std::cin, with a given prompt.
+		/// If input is empty, or blank (all ASCII spaces), then it will be considered invalid.
+		/// If input is invalid, the user is prompted again.
+		std::string* getInput(std::string prompt, std::string* dest)
 		{
-			std::string result;
-
 			do
 			{
 				std::cout << prompt;
-				std::getline(std::cin, result);
+				std::getline(std::cin, *dest);
 
-				if (result.empty())
+				if (dest->empty())
 				{
 					continue;
 				}
 
 				bool isValid = false;
 
-				for (int i = 0; i < result.length(); i++)
+				for (int i = 0; i < dest->length(); i++)
 				{
-					if (result[i] != ' ')
+					if ((*dest)[i] != ' ')
 					{
 						isValid = true;
 						break;
@@ -46,7 +47,7 @@ namespace TicTacToe
 
 			} while (true);
 
-			return result;
+			return dest;
 		}
 
 		std::vector<std::string>* split(std::string* str, const std::string* delimiter, std::vector<std::string>* dest)
@@ -254,7 +255,7 @@ namespace TicTacToe
 
 		while (!board.hasWinner())
 		{
-			playerCommand = Utilities::getInput(*currentPlayer.name + "'s turn: ");
+			Utilities::getInput(*currentPlayer.name + "'s turn: ", &playerCommand);
 			Utilities::split(&playerCommand, &parsedPlayerCommand);
 
 			if (Commands::processCommand(&parsedPlayerCommand, &board, &currentPlayer))
@@ -274,8 +275,8 @@ int main()
 	std::string player1Name;
 	std::string player2Name;
 
-	player1Name = TicTacToe::Utilities::getInput("Player 1's name: ");
-	player2Name = TicTacToe::Utilities::getInput("Player 2's name: ");
+	TicTacToe::Utilities::getInput("Player 1's name: ", &player1Name);
+	TicTacToe::Utilities::getInput("Player 2's name: ", &player2Name);
 
 	TicTacToe::Player player1 = { 1, &player1Name };
 	TicTacToe::Player player2 = { 2, &player2Name };
