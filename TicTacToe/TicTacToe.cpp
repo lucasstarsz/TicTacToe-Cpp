@@ -285,6 +285,14 @@ namespace TicTacToe
     namespace Commands
     {
 
+        static const std::unordered_map<std::string, BoardPrintType> BOARD_SHOW_OPTIONS = {
+            {"name", Name},
+            {"boardname", Name},
+            {"contents", Contents},
+            {"board", Contents},
+            {"all", All}
+        };
+
         bool exitCommand(std::vector<std::string>* command, Board* board, Player* player)
         {
             if (command->size() < 2)
@@ -308,14 +316,6 @@ namespace TicTacToe
             return true;
         }
 
-        const std::unordered_map<std::string, BoardPrintType> showOptions = {
-            {"name", Name},
-            {"boardname", Name},
-            {"contents", Contents},
-            {"board", Contents},
-            {"all", All}
-        };
-
         bool showCommand(std::vector<std::string>* command, Board* board, Player* player)
         {
             if (command->size() < 2)
@@ -327,7 +327,7 @@ namespace TicTacToe
 
             Utilities::stringToLower(&command->at(1));
 
-            if (showOptions.count(command->at(1)) < 1)
+            if (BOARD_SHOW_OPTIONS.count(command->at(1)) < 1)
             {
                 std::cout << "Nothing to show for '" << command->at(1) << "'.\n";
                 std::cout << "Usage: show [name/boardname, board/contents, all]\n";
@@ -335,7 +335,7 @@ namespace TicTacToe
                 return false;
             }
 
-            BoardPrintType printType = showOptions.at(command->at(1));
+            BoardPrintType printType = BOARD_SHOW_OPTIONS.at(command->at(1));
             board->print(printType);
 
             return false;
