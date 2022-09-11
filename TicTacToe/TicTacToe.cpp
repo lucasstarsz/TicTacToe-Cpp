@@ -21,6 +21,8 @@ namespace TicTacToe
         /// If input is invalid, the user is prompted again.
         std::string* getInput(std::string prompt, std::string* dest)
         {
+            bool isValid = false;
+
             do
             {
                 std::cout << prompt;
@@ -31,23 +33,16 @@ namespace TicTacToe
                     continue;
                 }
 
-                bool isValid = false;
-
                 for (int i = 0; i < dest->length(); i++)
                 {
-                    if ((*dest)[i] != ' ')
+                    if (dest->at(i) != ' ')
                     {
                         isValid = true;
                         break;
                     }
                 }
 
-                if (isValid)
-                {
-                    break;
-                }
-
-            } while (true);
+            } while (!isValid);
 
             return dest;
         }
