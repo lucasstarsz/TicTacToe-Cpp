@@ -130,6 +130,16 @@ namespace TicTacToe
 		All,
 	};
 
+	enum GameState
+	{
+		Playing,
+		Player1Wins,
+		Player2Wins,
+		Tie,
+		Ended,
+		Error = -1
+	};
+
 	class Board
 	{
 	public:
@@ -205,7 +215,7 @@ namespace TicTacToe
 			return true;
 		}
 
-		int hasWinner()
+		GameState getGameState()
 		{
 			const char player1 = 'X';
 			const char player2 = 'O';
@@ -219,16 +229,16 @@ namespace TicTacToe
 
 				if (board[winCondition[0]] == board[winCondition[1]] && board[winCondition[0]] == board[winCondition[2]])
 				{
-					return player1 == board[winCondition[0]] ? 1 : 2;
+					return player1 == board[winCondition[0]] ? Player1Wins : Player2Wins;
 				}
 			}
 
 			if (boardIsFilled())
 			{
-				return 3;
+				return Tie;
 			}
 
-			return 0;
+			return Playing;
 		}
 
 	private:
@@ -409,9 +419,8 @@ namespace TicTacToe
 				}
 
 				parsedPlayerCommand.clear();
-				winner = board.hasWinner();
+				winner = board.getGameState();
 			}
-
 		}
 		catch (std::exception& exception)
 		{
@@ -421,23 +430,23 @@ namespace TicTacToe
 
 		switch (winner)
 		{
-		case 1:
-			std::cout << player1->name << " wins!\n";
+		case Player1Wins:
+			std::cout << *player1->name << " wins!\n";
 			break;
-		case 2:
-			std::cout << player2->name << " wins!\n";
+		case Player2Wins:
+			std::cout << *player2->name << " wins!\n";
 			break;
-		case 3:
+		case Tie:
 			std::cout << "It's a tie!\n";
 			break;
-		case -1:
+		case Error:
 			std::cout << "Game error.\n";
 			break;
-		case 0:
+		case Ended:
 			std::cout << "Game ended.\n";
 			break;
 		default:
-			std::cout << "Game ended, winner was case '" << winner << "'.\n";
+			std::cout << "Game ended, case '" << winner << "'.\n";
 			break;
 		}
 	}
