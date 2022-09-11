@@ -361,11 +361,25 @@ namespace TicTacToe
 			return true;
 		}
 
+		bool helpCommand(std::vector<std::string>* command, Board* board, Player* player)
+		{
+			std::cout << "This is Tic-Tac-Toe! Your objective is to get 3 in a row, column, or diagonally, in order to win!\n";
+			std::cout << "You, " << *player->name << ", and your opponent, compete to win this turn-based game.\n\n";
+			std::cout << "Game Commands:\n";
+			std::cout << "exit -- exits the game immediately.\n";
+			std::cout << "show [name/boardname, board/contents, all] -- shows information about the board.\n";
+			std::cout << "play <row> <column> -- shows information about the board.\n";
+			std::cout << "help -- brings up this message.\n\n";
+
+			return false;
+		}
+
 		const std::unordered_map<std::string, bool (*)(std::vector<std::string>*, Board*, Player*)> commands = {
 			{"exit", &exitCommand},
 			{"show", &showCommand},
 			{"play", &playCommand},
-			{"p", &playCommand}
+			{"p", &playCommand},
+			{"help", &helpCommand}
 		};
 
 		/// Returns whether a command was found.
@@ -376,7 +390,7 @@ namespace TicTacToe
 
 			if (commands.count(command->at(0)) < 1)
 			{
-				std::cout << "No command '" << command->at(0) << "' was found.\n";
+				std::cout << "No command '" << command->at(0) << "' was found. ('help' lists all the commands)\n";
 				return false;
 			}
 
