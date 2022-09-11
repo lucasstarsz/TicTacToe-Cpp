@@ -276,7 +276,22 @@ namespace TicTacToe
 
 		bool exitCommand(std::vector<std::string>* command, Board* board, Player* player)
 		{
-			std::cout << "Exiting game...\n";
+			if (command->size() < 2)
+			{
+				std::cout << "Press the enter key to exit.";
+				std::cin.get();
+			}
+			else
+			{
+				Utilities::stringToLower(&command->at(1));
+
+				if (command->at(1) != "quiet" && (command->at(1).length() != 1 && command->at(1)[0] != 'q'))
+				{
+					std::cout << "Press the enter key to exit.";
+					std::cin.get();
+				}
+			}
+
 			exit(0);
 
 			return true;
