@@ -512,7 +512,7 @@ namespace TicTacToe
 		{
 			while (!winner)
 			{
-				Utilities::getInput(*currentPlayer.name + "'s turn: ", &playerCommand);
+				Utilities::getInput((currentPlayer.number == 1 ? "(X) " : "(O) ") + (*currentPlayer.name) + "'s turn: ", &playerCommand);
 				Utilities::split(&playerCommand, &parsedPlayerCommand);
 
 				if (Commands::processCommand(&parsedPlayerCommand, &board, &currentPlayer))
