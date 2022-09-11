@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 #include <type_traits>
+#include <iterator>
 
 namespace TicTacToe
 {
@@ -87,6 +88,27 @@ namespace TicTacToe
 		{
 			std::string delimiter = " ";
 			return split(str, &delimiter, dest);
+		}
+
+		std::string* join(std::vector<std::string>* strs, const std::string* delimiter, std::string* dest)
+		{
+			for (size_t i = 0; i < strs->size(); i++)
+			{
+				dest->append(strs->at(i));
+
+				if (i + 1 < strs->size())
+				{
+					dest->append(*delimiter);
+				}
+			}
+
+			return dest;
+		}
+
+		std::string* join(std::vector<std::string>* strs, std::string* dest)
+		{
+			std::string delimiter = " ";
+			return join(strs, &delimiter, dest);
 		}
 
 		/// Converts US-ASCII characters to their lowercase counterparts, using std::tolower.
@@ -377,6 +399,53 @@ namespace TicTacToe
 			return true;
 		}
 
+		bool renamePlayerCommand(std::vector<std::string>* command, Board* board, Player* player)
+		{
+			if (command->size() < 2)
+			{
+				std::cout << "No target specified.\n";
+				std::cout << "Usage: rename <board, or self> <new name>\n";
+
+				return false;
+			}
+
+			if (command->size() < 3)
+			{
+				std::cout << "No new name specified.\n";
+				std::cout << "Usage: rename <board, or self> <new name>\n";
+
+				return false;
+			}
+
+			Utilities::stringToLower(&command->at(1));
+
+			std::string* nameToSet;
+
+			if (command->at(1) == "board")
+			{
+				nameToSet = &board->boardName;
+			}
+			else if (command->at(1) == "self")
+			{
+				nameToSet = player->name;
+			}
+			else
+			{
+				std::cout << "Couldn't find '" << command->at(1) << "' to rename.\n";
+				std::cout << "Usage: rename <board, or self> <new name>\n";
+
+				return false;
+			}
+
+			std::vector<std::string> unjoinedName(command->begin() + 2, command->end());
+			std::string newName;
+			Utilities::join(&unjoinedName, &newName);
+
+			*nameToSet = newName;
+
+			return false;
+		}
+
 		bool helpCommand(std::vector<std::string>* command, Board* board, Player* player)
 		{
 			std::cout << "This is Tic-Tac-Toe! Your objective is to get 3 in a row, column, or diagonally, in order to win!\n";
@@ -384,6 +453,7 @@ namespace TicTacToe
 			std::cout << "Game Commands:\n";
 			std::cout << "exit -- exits the game immediately.\n";
 			std::cout << "show [name/boardname, board/contents, all] -- shows information about the board.\n";
+			std::cout << "rename <board, or self> <new name>\ -- renames the given target with a new name.\n";
 			std::cout << "play <row> <column> -- shows information about the board.\n";
 			std::cout << "help -- brings up this message.\n\n";
 
@@ -395,7 +465,8 @@ namespace TicTacToe
 			{"show", &showCommand},
 			{"play", &playCommand},
 			{"p", &playCommand},
-			{"help", &helpCommand}
+			{"help", &helpCommand},
+			{"rename", &renamePlayerCommand}
 		};
 
 		/// Returns whether a command was found, or completed an action warranting a player swap (like playing a move, or skipping).
