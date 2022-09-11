@@ -303,8 +303,9 @@ namespace TicTacToe
 
 			if (showOptions.count(command->at(1)) < 1)
 			{
-				std::cout << "Nothing to show for '" << command->at(1) << "'. Displaying default.\n";
-				board->print();
+				std::cout << "Nothing to show for '" << command->at(1) << "'.\n";
+				std::cout << "Usage: show [name/boardname, board/contents, all]\n";
+
 				return false;
 			}
 
