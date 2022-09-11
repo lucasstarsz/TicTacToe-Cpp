@@ -456,7 +456,7 @@ namespace TicTacToe
 		catch (std::exception& exception)
 		{
 			winner = -1;
-			std::cerr << exception.what();
+			std::cerr << "Exception: " << exception.what() << '\n';
 		}
 
 		switch (winner)
@@ -471,7 +471,7 @@ namespace TicTacToe
 			std::cout << "It's a tie!\n";
 			break;
 		case Error:
-			std::cout << "Game error.\n";
+			std::cout << "Game had an error while running, and had to cancel the current board.\n";
 			break;
 		case Ended:
 			std::cout << "Game ended.\n";
