@@ -318,7 +318,7 @@ namespace TicTacToe
 		{
 			if (command->size() < 3)
 			{
-				std::cout << "Usage: play <column 1, 2, or 3> <row 1, 2, or 3>\n";
+				std::cout << "Usage: play <row 1, 2, or 3> <column 1, 2, or 3>\n";
 				return false;
 			}
 
@@ -333,7 +333,7 @@ namespace TicTacToe
 			catch (std::logic_error const& exception)
 			{
 				std::cout << "Invalid row/column.\n";
-				std::cout << "Usage: play <column 1, 2, or 3> <row 1, 2, or 3>\n";
+				std::cout << "Usage: play <row 1, 2, or 3> <column 1, 2, or 3>\n";
 
 				return false;
 			}
@@ -341,7 +341,7 @@ namespace TicTacToe
 			if (!Utilities::withinRange(1, 3, column, row))
 			{
 				std::cout << "Invalid row/column.\n";
-				std::cout << "Usage: play <column 1, 2, or 3> <row 1, 2, or 3>\n";
+				std::cout << "Usage: play <row 1, 2, or 3> <column 1, 2, or 3>\n";
 
 				return false;
 			}
