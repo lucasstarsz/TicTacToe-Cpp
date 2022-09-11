@@ -296,7 +296,7 @@ namespace TicTacToe
             {
                 Utilities::stringToLower(&command->at(1));
 
-                if (command->at(1) != "quiet" && (command->at(1).length() != 1 && command->at(1)[0] != 'q'))
+                if (command->at(1) != "quiet" && !(command->at(1).length() == 1 && command->at(1)[0] == 'q'))
                 {
                     std::cout << "Press the enter key to exit.";
                     std::cin.get();
