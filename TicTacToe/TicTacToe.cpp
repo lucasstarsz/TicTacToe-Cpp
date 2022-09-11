@@ -156,6 +156,10 @@ namespace TicTacToe
 			{2, 4, 6}
 		};
 
+		const char PLAYER_1 = 'X';
+		const char PLAYER_2 = 'O';
+		const char EMPTY = ' ';
+
 		char board[9];
 		std::string boardName;
 
@@ -194,19 +198,19 @@ namespace TicTacToe
 
 		bool isSpaceAvailable(int row, int col)
 		{
-			return board[(3 * row) + col] == ' ';
+			return board[(3 * row) + col] == EMPTY;
 		}
 
 		void play(int row, int col, int playerNumber)
 		{
-			board[(3 * row) + col] = playerNumber == 1 ? 'X' : 'O';
+			board[(3 * row) + col] = playerNumber == 1 ? PLAYER_1 : PLAYER_2;
 		}
 
 		bool boardIsFilled()
 		{
 			for (int i = 0; i < 9; i++)
 			{
-				if (board[i] == ' ')
+				if (board[i] == EMPTY)
 				{
 					return false;
 				}
@@ -217,19 +221,16 @@ namespace TicTacToe
 
 		GameState getGameState()
 		{
-			const char player1 = 'X';
-			const char player2 = 'O';
-
 			for (const int* winCondition : WIN_CONDITIONS)
 			{
-				if (board[winCondition[0]] == ' ' || board[winCondition[1]] == ' ' || board[winCondition[2]] == ' ')
+				if (board[winCondition[0]] == EMPTY || board[winCondition[1]] == EMPTY || board[winCondition[2]] == EMPTY)
 				{
 					continue;
 				}
 
 				if (board[winCondition[0]] == board[winCondition[1]] && board[winCondition[0]] == board[winCondition[2]])
 				{
-					return player1 == board[winCondition[0]] ? Player1Wins : Player2Wins;
+					return PLAYER_1 == board[winCondition[0]] ? Player1Wins : Player2Wins;
 				}
 			}
 
@@ -248,7 +249,7 @@ namespace TicTacToe
 			{
 				for (int j = 0; j < 3; j++)
 				{
-					board[(3 * i) + j] = ' ';
+					board[(3 * i) + j] = EMPTY;
 				}
 			}
 		}
