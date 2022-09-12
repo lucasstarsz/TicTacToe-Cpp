@@ -351,7 +351,7 @@ namespace TicTacToe
                 row = std::stoi(command.at(1));
                 column = std::stoi(command.at(2));
             }
-            catch (std::logic_error const& exception)
+            catch (std::logic_error const&)
             {
                 std::cout << "Invalid row/column.\n";
                 std::cout << "Usage: play <row 1, 2, or 3> <column 1, 2, or 3>\n";
