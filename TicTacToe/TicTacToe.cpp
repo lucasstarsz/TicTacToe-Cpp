@@ -120,7 +120,7 @@ namespace TicTacToe
             typename... TVA,
             typename = std::enable_if_t<std::conjunction<std::is_same<T, TVA>...>::value, bool>
         >
-        bool withinRange(T min, T max, TVA... nums)
+            bool withinRange(T min, T max, TVA... nums)
         {
             for (T n : {nums...})
             {
@@ -140,14 +140,14 @@ namespace TicTacToe
         std::string* name;
     };
 
-    enum BoardPrintType
+    enum class BoardPrintType
     {
         Name,
         Contents,
         All,
     };
 
-    enum GameState
+    enum class GameState
     {
         Playing,
         Player1Wins,
@@ -193,20 +193,20 @@ namespace TicTacToe
 
         void print()
         {
-            print(All);
+            print(BoardPrintType::All);
         }
 
         void print(BoardPrintType printType)
         {
             switch (printType)
             {
-            case Name:
+            case BoardPrintType::Name:
                 printBoardName();
                 break;
-            case Contents:
+            case BoardPrintType::Contents:
                 printBoardContents();
                 break;
-            case All:
+            case BoardPrintType::All:
                 printBoardName();
                 printBoardContents();
                 break;
@@ -247,16 +247,16 @@ namespace TicTacToe
 
                 if (board[winCondition[0]] == board[winCondition[1]] && board[winCondition[0]] == board[winCondition[2]])
                 {
-                    return PLAYER_1 == board[winCondition[0]] ? Player1Wins : Player2Wins;
+                    return PLAYER_1 == board[winCondition[0]] ? GameState::Player1Wins : GameState::Player2Wins;
                 }
             }
 
             if (boardIsFilled())
             {
-                return Tie;
+                return GameState::Tie;
             }
 
-            return Playing;
+            return GameState::Playing;
         }
 
     private:
@@ -286,11 +286,11 @@ namespace TicTacToe
     {
 
         static const std::unordered_map<std::string, BoardPrintType> BOARD_SHOW_OPTIONS = {
-            {"name", Name},
-            {"boardname", Name},
-            {"contents", Contents},
-            {"board", Contents},
-            {"all", All}
+            {"name", BoardPrintType::Name},
+            {"boardname", BoardPrintType::Name},
+            {"contents", BoardPrintType::Contents},
+            {"board", BoardPrintType::Contents},
+            {"all", BoardPrintType::All}
         };
 
         bool exitCommand(std::vector<std::string>* command, Board* board, Player* player)
@@ -383,7 +383,7 @@ namespace TicTacToe
             board->play(row - 1, column - 1, player->number);
 
             // players will want to know what the board looks like after a successful play
-            board->print(Contents);
+            board->print(BoardPrintType::Contents);
 
             return true;
         }
@@ -495,11 +495,11 @@ namespace TicTacToe
         std::string playerCommand;
         std::vector<std::string> parsedPlayerCommand = {};
 
-        int winner = 0;
+        GameState boardGameState{};
 
         try
         {
-            while (!winner)
+            while (boardGameState == GameState::Playing)
             {
                 Utilities::getInput((currentPlayer.number == 1 ? "(X) " : "(O) ") + (*currentPlayer.name) + "'s turn: ", &playerCommand);
                 Utilities::split(&playerCommand, &parsedPlayerCommand);
@@ -510,34 +510,34 @@ namespace TicTacToe
                 }
 
                 parsedPlayerCommand.clear();
-                winner = board.getGameState();
+                boardGameState = board.getGameState();
             }
         }
         catch (std::exception& exception)
         {
-            winner = -1;
+            boardGameState = GameState::Error;
             std::cerr << "Exception: " << exception.what() << '\n';
         }
 
-        switch (winner)
+        switch (boardGameState)
         {
-        case Player1Wins:
+        case GameState::Player1Wins:
             std::cout << *player1->name << " wins!\n";
             break;
-        case Player2Wins:
+        case GameState::Player2Wins:
             std::cout << *player2->name << " wins!\n";
             break;
-        case Tie:
+        case GameState::Tie:
             std::cout << "It's a tie!\n";
             break;
-        case Error:
+        case GameState::Error:
             std::cout << "Game had an error while running, and had to cancel the current board.\n";
             break;
-        case Ended:
+        case GameState::Ended:
             std::cout << "Game ended.\n";
             break;
         default:
-            std::cout << "Game ended, case '" << winner << "'.\n";
+            std::cout << "Game ended, case '" << static_cast<int>(boardGameState) << "'.\n";
             break;
         }
     }
