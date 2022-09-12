@@ -232,7 +232,7 @@ namespace TicTacToe
 
         GameState getGameState()
         {
-            for (const int* winCondition : WIN_CONDITIONS)
+            for (const auto& winCondition : WIN_CONDITIONS)
             {
                 if (board[winCondition[0]] == EMPTY || board[winCondition[1]] == EMPTY || board[winCondition[2]] == EMPTY)
                 {
