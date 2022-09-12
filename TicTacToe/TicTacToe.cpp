@@ -13,7 +13,6 @@
 
 namespace TicTacToe
 {
-
     namespace Utilities
     {
         /// Gets input from std::cin, with a given prompt.
@@ -41,7 +40,6 @@ namespace TicTacToe
                         break;
                     }
                 }
-
             } while (!isValid);
         }
 
@@ -112,11 +110,10 @@ namespace TicTacToe
         template<
             typename T,
             typename... TVA,
-            typename = std::enable_if_t<std::conjunction<std::is_same<T, TVA>...>::value, bool>
-        >
-        bool withinRange(T min, T max, TVA... nums)
+            typename = std::enable_if_t<std::conjunction<std::is_same<T, TVA>...>::value, bool>>
+        bool withinRange(T min, T max, TVA ... nums)
         {
-            for (T n : {nums...})
+            for (T n : { nums... })
             {
                 if (n < min || n > max)
                 {
@@ -157,14 +154,14 @@ namespace TicTacToe
         const std::string DEFAULT_BOARD_NAME = "Unnamed Board";
 
         const int WIN_CONDITIONS[8][3] = {
-            {0, 1, 2},
-            {3, 4, 5},
-            {6, 7, 8},
-            {0, 3, 6},
-            {1, 4, 7},
-            {2, 5, 8},
-            {0, 4, 8},
-            {2, 4, 6}
+            { 0, 1, 2 },
+            { 3, 4, 5 },
+            { 6, 7, 8 },
+            { 0, 3, 6 },
+            { 1, 4, 7 },
+            { 2, 5, 8 },
+            { 0, 4, 8 },
+            { 2, 4, 6 }
         };
 
         const char PLAYER_1 = 'X';
@@ -278,13 +275,12 @@ namespace TicTacToe
 
     namespace Commands
     {
-
         static const std::unordered_map<std::string, BoardPrintType> BOARD_SHOW_OPTIONS = {
-            {"name", BoardPrintType::Name},
-            {"boardname", BoardPrintType::Name},
-            {"contents", BoardPrintType::Contents},
-            {"board", BoardPrintType::Contents},
-            {"all", BoardPrintType::All}
+            { "name", BoardPrintType::Name },
+            { "boardname", BoardPrintType::Name },
+            { "contents", BoardPrintType::Contents },
+            { "board", BoardPrintType::Contents },
+            { "all", BoardPrintType::All }
         };
 
         bool exitCommand(std::vector<std::string>& command, Board& board, Player& player)
@@ -444,12 +440,12 @@ namespace TicTacToe
         }
 
         const std::unordered_map<std::string, bool (&)(std::vector<std::string>&, Board&, Player&)> commands = {
-            {"exit", exitCommand},
-            {"show", showCommand},
-            {"play", playCommand},
-            {"p", playCommand},
-            {"help", helpCommand},
-            {"rename", renamePlayerCommand}
+            { "exit", exitCommand },
+            { "show", showCommand },
+            { "play", playCommand },
+            { "p", playCommand },
+            { "help", helpCommand },
+            { "rename", renamePlayerCommand }
         };
 
         /// Returns whether a command was found, or completed an action warranting a player swap (like playing a move, or skipping).
@@ -481,7 +477,7 @@ namespace TicTacToe
         namespace chrono = std::chrono;
         const chrono::nanoseconds timeSeed = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch());
 
-        std::srand((unsigned int)timeSeed.count());
+        std::srand((unsigned int) timeSeed.count());
 
         const int firstPlayerTurn = (std::rand() % 2);
         Player currentPlayer = firstPlayerTurn == 0 ? player2 : player1;
