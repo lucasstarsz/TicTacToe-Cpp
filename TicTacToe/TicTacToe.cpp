@@ -19,23 +19,23 @@ namespace TicTacToe
         /// Gets input from std::cin, with a given prompt.
         /// If input is empty, or blank (all US-ASCII spaces), then it will be considered invalid.
         /// If input is invalid, the user is prompted again.
-        std::string* getInput(std::string prompt, std::string* dest)
+        void getInput(const std::string& prompt, std::string& dest)
         {
             bool isValid = false;
 
             do
             {
                 std::cout << prompt;
-                std::getline(std::cin, *dest);
+                std::getline(std::cin, dest);
 
-                if (dest->empty())
+                if (dest.empty())
                 {
                     continue;
                 }
 
-                for (int i = 0; i < dest->length(); i++)
+                for (int i = 0; i < dest.length(); i++)
                 {
-                    if (dest->at(i) != ' ')
+                    if (dest.at(i) != ' ')
                     {
                         isValid = true;
                         break;
@@ -43,30 +43,28 @@ namespace TicTacToe
                 }
 
             } while (!isValid);
-
-            return dest;
         }
 
-        std::vector<std::string>* split(std::string* str, const std::string* delimiter, std::vector<std::string>* dest)
+        void split(const std::string& str, const std::string& delimiter, std::vector<std::string>& dest)
         {
             size_t last(0);
             size_t next(0);
 
-            if ((next = str->find(*delimiter, last)) != std::string::npos)
+            if ((next = str.find(delimiter, last)) != std::string::npos)
             {
-                dest->push_back(str->substr(last, next - last));
+                dest.push_back(str.substr(last, next - last));
                 last = next + 1;
             }
             else
             {
-                dest->push_back(*str);
-                return dest;
+                dest.push_back(str);
+                return;
             }
 
-            while (last < str->length())
+            while (last < str.length())
             {
-                next = str->find(*delimiter, last);
-                dest->push_back(str->substr(last, next - last));
+                next = str.find(delimiter, last);
+                dest.push_back(str.substr(last, next - last));
 
                 if (next == std::string::npos)
                 {
@@ -75,42 +73,38 @@ namespace TicTacToe
 
                 last = next + 1;
             }
-
-            return dest;
         }
 
-        std::vector<std::string>* split(std::string* str, std::vector<std::string>* dest)
+        void split(const std::string& str, std::vector<std::string>& dest)
         {
             std::string delimiter = " ";
-            return split(str, &delimiter, dest);
+            split(str, delimiter, dest);
         }
 
-        std::string* join(std::vector<std::string>* strs, const std::string* delimiter, std::string* dest)
+        void join(const std::vector<std::string>& strs, const std::string& delimiter, std::string& dest)
         {
-            for (size_t i = 0; i < strs->size(); i++)
+            for (size_t i = 0; i < strs.size(); i++)
             {
-                dest->append(strs->at(i));
+                dest.append(strs.at(i));
 
-                if (i + 1 < strs->size())
+                if (i + 1 < strs.size())
                 {
-                    dest->append(*delimiter);
+                    dest.append(delimiter);
                 }
             }
-
-            return dest;
         }
 
-        std::string* join(std::vector<std::string>* strs, std::string* dest)
+        void join(const std::vector<std::string>& strs, std::string& dest)
         {
             std::string delimiter = " ";
-            return join(strs, &delimiter, dest);
+            join(strs, delimiter, dest);
         }
 
         /// Converts US-ASCII characters to their lowercase counterparts, using std::tolower.
         /// Note: does not support anything other than ascii.
-        void stringToLower(std::string* str)
+        void stringToLower(std::string& str)
         {
-            std::transform(str->begin(), str->end(), str->begin(), [](unsigned char c) { return std::tolower(c); });
+            std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
         }
 
         /// Checks whether the given values in 'nums' are within the given 'min' and 'max' values.
@@ -120,7 +114,7 @@ namespace TicTacToe
             typename... TVA,
             typename = std::enable_if_t<std::conjunction<std::is_same<T, TVA>...>::value, bool>
         >
-            bool withinRange(T min, T max, TVA... nums)
+        bool withinRange(T min, T max, TVA... nums)
         {
             for (T n : {nums...})
             {
@@ -137,7 +131,7 @@ namespace TicTacToe
     struct Player
     {
         int number;
-        std::string* name;
+        std::string name;
     };
 
     enum class BoardPrintType
@@ -186,7 +180,7 @@ namespace TicTacToe
             initializeBoard();
         }
 
-        Board(std::string* name) : board(), boardName(*name)
+        Board(std::string& name) : board(), boardName(name)
         {
             initializeBoard();
         }
@@ -293,18 +287,18 @@ namespace TicTacToe
             {"all", BoardPrintType::All}
         };
 
-        bool exitCommand(std::vector<std::string>* command, Board* board, Player* player)
+        bool exitCommand(std::vector<std::string>& command, Board& board, Player& player)
         {
-            if (command->size() < 2)
+            if (command.size() < 2)
             {
                 std::cout << "Press the enter key to exit.";
                 std::cin.get();
             }
             else
             {
-                Utilities::stringToLower(&command->at(1));
+                Utilities::stringToLower(command.at(1));
 
-                if (command->at(1) != "quiet" && !(command->at(1).length() == 1 && command->at(1)[0] == 'q'))
+                if (command.at(1) != "quiet" && !(command.at(1).length() == 1 && command.at(1)[0] == 'q'))
                 {
                     std::cout << "Press the enter key to exit.";
                     std::cin.get();
@@ -316,34 +310,34 @@ namespace TicTacToe
             return true;
         }
 
-        bool showCommand(std::vector<std::string>* command, Board* board, Player* player)
+        bool showCommand(std::vector<std::string>& command, Board& board, Player& player)
         {
-            if (command->size() < 2)
+            if (command.size() < 2)
             {
                 // default to showing the board
-                board->print();
+                board.print();
                 return false;
             }
 
-            Utilities::stringToLower(&command->at(1));
+            Utilities::stringToLower(command.at(1));
 
-            if (BOARD_SHOW_OPTIONS.count(command->at(1)) < 1)
+            if (BOARD_SHOW_OPTIONS.count(command.at(1)) < 1)
             {
-                std::cout << "Nothing to show for '" << command->at(1) << "'.\n";
+                std::cout << "Nothing to show for '" << command.at(1) << "'.\n";
                 std::cout << "Usage: show [name/boardname, board/contents, all]\n";
 
                 return false;
             }
 
-            BoardPrintType printType = BOARD_SHOW_OPTIONS.at(command->at(1));
-            board->print(printType);
+            BoardPrintType printType = BOARD_SHOW_OPTIONS.at(command.at(1));
+            board.print(printType);
 
             return false;
         }
 
-        bool playCommand(std::vector<std::string>* command, Board* board, Player* player)
+        bool playCommand(std::vector<std::string>& command, Board& board, Player& player)
         {
-            if (command->size() < 3)
+            if (command.size() < 3)
             {
                 std::cout << "Usage: play <row 1, 2, or 3> <column 1, 2, or 3>\n";
                 return false;
@@ -354,8 +348,8 @@ namespace TicTacToe
 
             try
             {
-                row = std::stoi(command->at(1));
-                column = std::stoi(command->at(2));
+                row = std::stoi(command.at(1));
+                column = std::stoi(command.at(2));
             }
             catch (std::logic_error const& exception)
             {
@@ -373,24 +367,24 @@ namespace TicTacToe
                 return false;
             }
 
-            if (!board->isSpaceAvailable(row - 1, column - 1))
+            if (!board.isSpaceAvailable(row - 1, column - 1))
             {
                 std::cout << "Space (" << row << ", " << column << ") has already been played!\n";
 
                 return false;
             }
 
-            board->play(row - 1, column - 1, player->number);
+            board.play(row - 1, column - 1, player.number);
 
             // players will want to know what the board looks like after a successful play
-            board->print(BoardPrintType::Contents);
+            board.print(BoardPrintType::Contents);
 
             return true;
         }
 
-        bool renamePlayerCommand(std::vector<std::string>* command, Board* board, Player* player)
+        bool renamePlayerCommand(std::vector<std::string>& command, Board& board, Player& player)
         {
-            if (command->size() < 2)
+            if (command.size() < 2)
             {
                 std::cout << "No target specified.\n";
                 std::cout << "Usage: rename <board, or self> <new name>\n";
@@ -398,7 +392,7 @@ namespace TicTacToe
                 return false;
             }
 
-            if (command->size() < 3)
+            if (command.size() < 3)
             {
                 std::cout << "No new name specified.\n";
                 std::cout << "Usage: rename <board, or self> <new name>\n";
@@ -406,39 +400,39 @@ namespace TicTacToe
                 return false;
             }
 
-            Utilities::stringToLower(&command->at(1));
+            Utilities::stringToLower(command.at(1));
 
             std::string* nameToSet;
 
-            if (command->at(1) == "board")
+            if (command.at(1) == "board")
             {
-                nameToSet = &board->boardName;
+                nameToSet = &board.boardName;
             }
-            else if (command->at(1) == "self")
+            else if (command.at(1) == "self")
             {
-                nameToSet = player->name;
+                nameToSet = &player.name;
             }
             else
             {
-                std::cout << "Couldn't find '" << command->at(1) << "' to rename.\n";
+                std::cout << "Couldn't find '" << command.at(1) << "' to rename.\n";
                 std::cout << "Usage: rename <board, or self> <new name>\n";
 
                 return false;
             }
 
-            std::vector<std::string> unjoinedName(command->begin() + 2, command->end());
+            std::vector<std::string> unjoinedName(command.begin() + 2, command.end());
             std::string newName;
-            Utilities::join(&unjoinedName, &newName);
+            Utilities::join(unjoinedName, newName);
 
             *nameToSet = newName;
 
             return false;
         }
 
-        bool helpCommand(std::vector<std::string>* command, Board* board, Player* player)
+        bool helpCommand(std::vector<std::string>& command, Board& board, Player& player)
         {
             std::cout << "This is Tic-Tac-Toe! Your objective is to get 3 in a row, column, or diagonally, in order to win!\n";
-            std::cout << "You, " << *player->name << ", and your opponent, compete to win this turn-based game.\n\n";
+            std::cout << "You, " << player.name << ", and your opponent, compete to win this turn-based game.\n\n";
             std::cout << "Game Commands:\n";
             std::cout << "exit -- exits the game immediately.\n";
             std::cout << "show [name/boardname, board/contents, all] -- shows information about the board.\n";
@@ -449,36 +443,36 @@ namespace TicTacToe
             return false;
         }
 
-        const std::unordered_map<std::string, bool (*)(std::vector<std::string>*, Board*, Player*)> commands = {
-            {"exit", &exitCommand},
-            {"show", &showCommand},
-            {"play", &playCommand},
-            {"p", &playCommand},
-            {"help", &helpCommand},
-            {"rename", &renamePlayerCommand}
+        const std::unordered_map<std::string, bool (&)(std::vector<std::string>&, Board&, Player&)> commands = {
+            {"exit", exitCommand},
+            {"show", showCommand},
+            {"play", playCommand},
+            {"p", playCommand},
+            {"help", helpCommand},
+            {"rename", renamePlayerCommand}
         };
 
         /// Returns whether a command was found, or completed an action warranting a player swap (like playing a move, or skipping).
         /// Note: does not support anything other than US-ASCII.
-        bool processCommand(std::vector<std::string>* command, Board* board, Player* player)
+        bool processCommand(std::vector<std::string>& command, Board& board, Player& player)
         {
-            Utilities::stringToLower(&command->at(0));
+            Utilities::stringToLower(command.at(0));
 
-            if (commands.count(command->at(0)) < 1)
+            if (commands.count(command.at(0)) < 1)
             {
-                std::cout << "No command '" << command->at(0) << "' was found. ('help' lists all the commands)\n";
+                std::cout << "No command '" << command.at(0) << "' was found. ('help' lists all the commands)\n";
                 return false;
             }
 
-            auto nextCommand = commands.at(command->at(0));
+            auto nextCommand = commands.at(command.at(0));
             return nextCommand(command, board, player);
         }
     }
 
-    void runGame(Player* player1, Player* player2)
+    void runGame(Player& player1, Player& player2)
     {
-        std::string boardName = (*player1->name + " vs " + *player2->name);
-        Board board = (&boardName);
+        std::string boardName = (player1.name + " vs " + player2.name);
+        Board board = (boardName);
 
         board.print();
 
@@ -490,7 +484,7 @@ namespace TicTacToe
         std::srand((unsigned int)timeSeed.count());
 
         const int firstPlayerTurn = (std::rand() % 2);
-        Player currentPlayer = firstPlayerTurn == 0 ? *player2 : *player1;
+        Player currentPlayer = firstPlayerTurn == 0 ? player2 : player1;
 
         std::string playerCommand;
         std::vector<std::string> parsedPlayerCommand = {};
@@ -501,12 +495,13 @@ namespace TicTacToe
         {
             while (boardGameState == GameState::Playing)
             {
-                Utilities::getInput((currentPlayer.number == 1 ? "(X) " : "(O) ") + (*currentPlayer.name) + "'s turn: ", &playerCommand);
-                Utilities::split(&playerCommand, &parsedPlayerCommand);
+                Utilities::getInput((currentPlayer.number == 1 ? "(X) " : "(O) ") + currentPlayer.name + "'s turn: ", playerCommand);
+                Utilities::split(playerCommand, parsedPlayerCommand);
 
-                if (Commands::processCommand(&parsedPlayerCommand, &board, &currentPlayer))
+                if (Commands::processCommand(parsedPlayerCommand, board, currentPlayer))
                 {
-                    currentPlayer = currentPlayer.number == 1 ? *player2 : *player1;
+                    int currentPlayerNumber = currentPlayer.number;
+                    currentPlayer = currentPlayerNumber == 1 ? player2 : player1;
                 }
 
                 parsedPlayerCommand.clear();
@@ -522,10 +517,10 @@ namespace TicTacToe
         switch (boardGameState)
         {
         case GameState::Player1Wins:
-            std::cout << *player1->name << " wins!\n";
+            std::cout << player1.name << " wins!\n";
             break;
         case GameState::Player2Wins:
-            std::cout << *player2->name << " wins!\n";
+            std::cout << player2.name << " wins!\n";
             break;
         case GameState::Tie:
             std::cout << "It's a tie!\n";
@@ -547,8 +542,8 @@ bool shouldPlayAgain()
 {
     std::string response;
 
-    TicTacToe::Utilities::getInput("Play another match? (Y)es to play, (N)o or (C)ancel to exit. ", &response);
-    TicTacToe::Utilities::stringToLower(&response);
+    TicTacToe::Utilities::getInput("Play another match? (Y)es to play, (N)o or (C)ancel to exit. ", response);
+    TicTacToe::Utilities::stringToLower(response);
 
     return response == "yes" || (response.length() == 1 && response[0] == 'y');
 }
@@ -560,15 +555,15 @@ int main()
     std::string player1Name;
     std::string player2Name;
 
-    TicTacToe::Utilities::getInput("Player 1's name: ", &player1Name);
-    TicTacToe::Utilities::getInput("Player 2's name: ", &player2Name);
+    TicTacToe::Utilities::getInput("Player 1's name: ", player1Name);
+    TicTacToe::Utilities::getInput("Player 2's name: ", player2Name);
 
-    TicTacToe::Player player1 = { 1, &player1Name };
-    TicTacToe::Player player2 = { 2, &player2Name };
+    TicTacToe::Player player1 = { 1, player1Name };
+    TicTacToe::Player player2 = { 2, player2Name };
 
     do
     {
-        TicTacToe::runGame(&player1, &player2);
+        TicTacToe::runGame(player1, player2);
     } while (shouldPlayAgain());
 
     std::cout << "Press the enter key to exit.";
